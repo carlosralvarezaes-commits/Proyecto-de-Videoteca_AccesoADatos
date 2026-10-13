@@ -80,7 +80,10 @@ public final class GestorXML {
      * TODO: implementar (y crear VideotecaHandler) o dejar asi si eliges otra tecnica.
      */
     public static List<Categoria> obtenerCategoriasXMLSAX(Path fichero) throws Exception {
-        throw new UnsupportedOperationException("Tecnica no implementada: SAX");
+        
+        
+        
+        return null;
     }
 
     // ------------------------------------------------------------ JAXB

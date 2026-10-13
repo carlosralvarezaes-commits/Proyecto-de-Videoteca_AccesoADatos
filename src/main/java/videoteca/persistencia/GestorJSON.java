@@ -1,5 +1,6 @@
 package videoteca.persistencia;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import videoteca.modelo.Categoria;
 
@@ -98,6 +99,8 @@ public final class GestorJSON {
      * TODO: implementar (o dejar asi si eliges Gson).
      */
     public static List<Categoria> obtenerCategoriasJSONJackson(Path fichero) throws IOException {
-        throw new UnsupportedOperationException("Tecnica no implementada: Jackson (obtener)");
+        ObjectMapper mapper = new ObjectMapper();
+        List<Categoria> c= mapper.readValue(fichero.toFile(),new TypeReference<List <Categoria>> (){});
+        return c;
     }
 }

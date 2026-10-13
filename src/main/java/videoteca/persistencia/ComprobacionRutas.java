@@ -66,7 +66,6 @@ public final class ComprobacionRutas {
      * TODO: implementar.
      */
     public static void comprobarExportacion(Path fichero, boolean sobrescribir)throws ExcepcionDirectorioNoExiste, ExcepcionOperacionCancelada {
-        try {
             File file = new File(fichero.toFile().getName());
             Path directorio = fichero.toAbsolutePath().getParent();
 
@@ -81,11 +80,7 @@ public final class ComprobacionRutas {
 
 
             }
-
-        } catch (IOException e) {
-            e.getMessage();
-        }
-
+               
 
 
     }
