@@ -18,16 +18,14 @@ import videoteca.modelo.Pelicula;
  */
 public class VideotecaHandler extends DefaultHandler {
     private  ArrayList<Categoria> categorias;
-    private Categoria categoriaActual;
 
     
-    @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-        super.endElement(uri, localName, qName); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
-    }
+   
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
+        Categoria categoriaActual;
+
         switch (qName) {
             case "videoteca":
                     categorias = new ArrayList<>();
@@ -37,6 +35,8 @@ public class VideotecaHandler extends DefaultHandler {
                 categoriaActual=new Categoria();
                 categoriaActual.setId(Integer.parseInt(att.getValue("id")));
                 categoriaActual.setNombre(att.getValue("nombre"));
+                categorias.add(categoriaActual);
+                
                 break;
             case "pelicula":
                 Pelicula peli;
@@ -50,17 +50,11 @@ public class VideotecaHandler extends DefaultHandler {
                 
                 break;
         }
-                
-                
-
-        
-        
-        
-        
-        
     }
     
-    
+    public ArrayList<Categoria>obtenerResultado(){
+        return categorias;
+    }
 
 
 

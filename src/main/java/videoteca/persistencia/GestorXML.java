@@ -6,7 +6,10 @@ import videoteca.modelo.Videoteca;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 /**
  * XML con SAX, JAXB o DOM.
@@ -80,10 +83,14 @@ public final class GestorXML {
      * TODO: implementar (y crear VideotecaHandler) o dejar asi si eliges otra tecnica.
      */
     public static List<Categoria> obtenerCategoriasXMLSAX(Path fichero) throws Exception {
-        
-        
-        
-        return null;
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser saxParser = factory.newSAXParser();
+            
+            VideotecaHandler parser = new VideotecaHandler();
+            saxParser.parse(fichero.toFile(),parser);
+            
+            ArrayList<Categoria> lista=parser.obtenerResultado();
+        return lista;
     }
 
     // ------------------------------------------------------------ JAXB
