@@ -38,11 +38,11 @@ public final class ComprobacionRutas {
     public static void comprobarImportacion(Path fichero)throws ExcepcionDirectorioNoExiste, ExcepcionFicheroNoExiste {
         Path directorio=fichero.toAbsolutePath().getParent();
 
-        if(directorio==null && Files.isDirectory(directorio) ){
+        if(directorio==null && !Files.isDirectory(directorio) ){
             throw new ExcepcionDirectorioNoExiste(directorio);
         }
 
-        if(Files.isRegularFile(directorio)) {
+        if(!Files.isRegularFile(directorio)) {
             throw new ExcepcionFicheroNoExiste(directorio);
         }
 
@@ -66,21 +66,18 @@ public final class ComprobacionRutas {
      * TODO: implementar.
      */
     public static void comprobarExportacion(Path fichero, boolean sobrescribir)throws ExcepcionDirectorioNoExiste, ExcepcionOperacionCancelada {
-            File file = new File(fichero.toFile().getName());
-            Path directorio = fichero.toAbsolutePath().getParent();
 
-            //Si existe el directorio
-            if (directorio == null && !file.isDirectory()) {
-                throw new ExcepcionDirectorioNoExiste(directorio);
-            } else {
+        Path dir= fichero.toAbsolutePath().getParent();
 
-                if(Files.exists(fichero) && sobrescribir==false){
-                    throw new ExcepcionOperacionCancelada(fichero);
-                }
-
-
+        if(!Files.isDirectory(dir)){
+            throw new ExcepcionDirectorioNoExiste(fichero);
+        }else {
+            if(Files.exists(fichero) && sobrescribir==false){
+                  throw new ExcepcionOperacionCancelada(fichero);
             }
-               
+        }
+
+
 
 
     }
