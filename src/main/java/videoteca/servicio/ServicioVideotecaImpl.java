@@ -12,6 +12,7 @@ import videoteca.persistencia.GestorTextoPlano;
 import videoteca.persistencia.GestorXML;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -127,8 +128,19 @@ public class ServicioVideotecaImpl implements ServicioVideoteca {
      * TODO: implementar.
      */
     @Override
-    public String iniciar() {
-        throw new UnsupportedOperationException("TODO: iniciar (tarea 7)");
+    public String iniciar(){
+        Path ruta=directorioConfig.resolve("conf.properties");
+        String rutaAbsoluta= String.valueOf(ruta.toAbsolutePath().normalize());
+        if(!Files.exists(ruta)){
+            configuracion=Configuracion.porDefecto();
+        }
+        try{
+           configuracion=Configuracion.cargar(ruta);
+           return "Fichero de Configuracion :  "+rutaAbsoluta+" -> Existe. Opciones leidas";
+        }catch (Exception e ){
+            configuracion=Configuracion.porDefecto();
+            return "Fichero de Configuracion: "+rutaAbsoluta+" -> Existe, pero no se ha podido leer ("+e.getMessage()+"). Se han Colocado las opciones por defecto ";
+        }
     }
 
     /**

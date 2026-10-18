@@ -4,7 +4,11 @@ import videoteca.excepciones.ExcepcionDirectorioNoExiste;
 import videoteca.excepciones.ExcepcionFicheroNoExiste;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
+import java.util.Properties;
 
 /**
  * Opciones del programa, leidas UNA vez de ./config/conf.properties.
@@ -24,14 +28,20 @@ import java.nio.file.Path;
  */
 public final class Configuracion {
 
-    /** Libreria con la que se lee o se escribe un JSON. */
-    public enum TecnicaJson { GSON, JACKSON }
+    /**
+     * Libreria con la que se lee o se escribe un JSON.
+     */
+    public enum TecnicaJson {GSON, JACKSON}
 
-    /** Tecnica con la que se LEE un XML. */
-    public enum TecnicaLecturaXml { SAX, JAXB, DOM }
+    /**
+     * Tecnica con la que se LEE un XML.
+     */
+    public enum TecnicaLecturaXml {SAX, JAXB, DOM}
 
-    /** Tecnica con la que se ESCRIBE un XML (SAX no puede escribir). */
-    public enum TecnicaEscrituraXml { JAXB, DOM }
+    /**
+     * Tecnica con la que se ESCRIBE un XML (SAX no puede escribir).
+     */
+    public enum TecnicaEscrituraXml {JAXB, DOM}
 
     private final boolean sobrescribir;
     private final TecnicaJson importacionJson;
@@ -48,7 +58,9 @@ public final class Configuracion {
         this.exportacionXml = exportacionXml;
     }
 
-    /** Valores por defecto: sobrescribir=false, gson, gson, dom, dom. */
+    /**
+     * Valores por defecto: sobrescribir=false, gson, gson, dom, dom.
+     */
     public static Configuracion porDefecto() {
         return new Configuracion(false, TecnicaJson.GSON, TecnicaJson.GSON,
                 TecnicaLecturaXml.DOM, TecnicaEscrituraXml.DOM);
@@ -76,20 +88,106 @@ public final class Configuracion {
 
     /**
      * Lee el fichero .properties y devuelve la configuracion.
-     *
+     * <p>
      * PASOS:
-     *   1. ComprobacionRutas.comprobarImportacion(fichero)  (asi tambien lanza
-     *      ExcepcionDirectorioNoExiste / ExcepcionFicheroNoExiste).
-     *   2. new Properties() y load(reader), con un reader de Files.newBufferedReader(fichero).
-     *   3. Para cada clave: getProperty(clave). Si es null -> su valor por defecto
-     *      (los puedes sacar de porDefecto()). Si esta, conviertela al valor del enumerado
-     *      (trim() y toUpperCase() ayudan; Enum.valueOf o un switch).
-     *   4. return new Configuracion(...) con los 5 valores.
-     *
+     * 1. ComprobacionRutas.comprobarImportacion(fichero)  (asi tambien lanza
+     * ExcepcionDirectorioNoExiste / ExcepcionFicheroNoExiste).
+     * 2. new Properties() y load(reader), con un reader de Files.newBufferedReader(fichero).
+     * 3. Para cada clave: getProperty(clave). Si es null -> su valor por defecto
+     * (los puedes sacar de porDefecto()). Si esta, conviertela al valor del enumerado
+     * (trim() y toUpperCase() ayudan; Enum.valueOf o un switch).
+     * 4. return new Configuracion(...) con los 5 valores.
+     * <p>
      * TODO: implementar.
      */
-    public static Configuracion cargar(Path fichero)
-            throws IOException, ExcepcionDirectorioNoExiste, ExcepcionFicheroNoExiste {
-        throw new UnsupportedOperationException("TODO: Configuracion.cargar (tarea 7)");
+    public static Configuracion cargar(Path fichero) throws IOException, ExcepcionDirectorioNoExiste, ExcepcionFicheroNoExiste {
+
+        ComprobacionRutas.comprobarImportacion(fichero);
+
+        Properties p = new Properties();
+        try(Reader reader = Files.newBufferedReader(fichero)){
+            p.load(reader);
+        }
+
+        Configuracion def = porDefecto();
+
+        //Ingresa valor default
+        boolean sobrescribir = def.isSobrescribir();
+
+        //Ingresa el valor del fichero
+        String  valorSobrescribir= p.getProperty("sobrescribir");
+
+        //Comprueba si el valor del fichero no es nulo
+        if(valorSobrescribir !=null){
+            //pasamos el valor del fichero a un valor de tipo boolean
+            sobrescribir=Boolean.parseBoolean(valorSobrescribir.trim());
+        }
+
+        //Ingresa el valor default
+        TecnicaJson importacionJson = def.getImportacionJson();
+
+        //ingresa el valor del fhicero
+        String valorImpJson = p.getProperty("importacion_json");
+
+        //Comprueba que el valor no sea nulo
+        if(valorImpJson !=null){
+            //ingresa su mismo valor, pero sin espacios y en MAYUSCULAS
+            //osea si era "gson " ahora es "GSON" <-sin espacios y en mayus.
+            valorImpJson= valorImpJson.trim().toUpperCase();
+
+            //si el valor dentro de la variable "importada" es igual a gson <-(ignoreCase)
+            if(valorImpJson.equalsIgnoreCase("gson")){
+                //si es true , entonces es GSON
+                importacionJson= TecnicaJson.GSON;
+            }else if(valorImpJson.equalsIgnoreCase("jackson")){
+                //es falso , pero su valor es jackson entonces es Jackson
+                importacionJson=TecnicaJson.JACKSON;
+            }
+        }
+
+        TecnicaJson exportacionJson = def.getExportacionJson();
+        String valorExpJson = p.getProperty("exportacion_json");
+
+        if(valorExpJson != null){
+
+            valorExpJson=valorExpJson.toUpperCase();
+            if(valorExpJson.equalsIgnoreCase("gson")){
+                exportacionJson=TecnicaJson.GSON;
+            } else if (valorExpJson.equalsIgnoreCase("jackson")) {
+                exportacionJson=TecnicaJson.JACKSON;
+            }
+
+        }
+
+
+        TecnicaLecturaXml importacionXML= def.getImportacionXml();
+        String valorImpXML  = p.getProperty("importacion_xml");
+
+        if(valorImpXML!=null){
+            valorImpXML=valorImpXML.trim().toUpperCase();
+            if(valorImpXML.equalsIgnoreCase("sax")){
+                importacionXML=TecnicaLecturaXml.SAX;
+            } else if (valorImpXML.equalsIgnoreCase("jaxb")) {
+                importacionXML=TecnicaLecturaXml.JAXB;
+            } else if (valorImpXML.equalsIgnoreCase("dom")) {
+                importacionXML=TecnicaLecturaXml.DOM;
+            }
+        }
+
+
+        TecnicaEscrituraXml exportacionXML = def.getExportacionXml();
+        String valorExpXML = p.getProperty("exportacion_xml");
+
+        if(valorExpXML !=null) {
+            valorExpXML = valorExpXML.trim().toUpperCase();
+            if (valorExpXML.equalsIgnoreCase("dom")) {
+                exportacionXML = TecnicaEscrituraXml.DOM;
+            } else if (valorExpXML.equalsIgnoreCase("jaxb")) {
+                exportacionXML = TecnicaEscrituraXml.JAXB;
+            }
+        }
+
+
+        return new Configuracion(sobrescribir,importacionJson,exportacionJson,importacionXML,exportacionXML);
     }
 }
