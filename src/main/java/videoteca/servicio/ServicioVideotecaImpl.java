@@ -176,7 +176,7 @@ public class ServicioVideotecaImpl implements ServicioVideoteca {
     @Override
     public Categoria crearCategoria(String nombre) {
         if(nombre == null || nombre.trim().isEmpty()){
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Error: No se puede Crear una Categoria sin Nombre");
         }
         int id =GeneradorIds.siguienteIdCategoria(categorias);
         //crea e ingresa la categoria a la lista de categorias
@@ -201,7 +201,10 @@ public class ServicioVideotecaImpl implements ServicioVideoteca {
     @Override
     public Pelicula crearPelicula(int idCategoria, String titulo, String director, int anio, int duracionMinutos) {
         if(titulo == null || titulo.trim().isEmpty()){
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Error: No se puede crear una Pelicula sin Titulo");
+        }
+        if(director == null || director.trim().isEmpty()){
+            throw new IllegalArgumentException("Error: No se puede Crear una Pelicula sin Director");
         }
 
         Categoria destion= null;
@@ -213,7 +216,7 @@ public class ServicioVideotecaImpl implements ServicioVideoteca {
         }
 
         if(destion==null){
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Error al encontrar el destino de la Categoria");
         }
 
         int idPelicula = GeneradorIds.siguienteIdPelicula(categorias);
