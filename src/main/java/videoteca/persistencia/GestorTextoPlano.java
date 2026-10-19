@@ -77,7 +77,7 @@ public final class  GestorTextoPlano {
                 try {
                     switch (tipo) {
                         case ("CATEGORIA") -> {
-                            if(partes.length !=6){
+                            if(partes.length !=3){
                                 throw new IOException("Error en la linea "+numeroLinea+" : Categoria necesita 2 campos");
                             }
 

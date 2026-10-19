@@ -18,13 +18,13 @@ import videoteca.modelo.Pelicula;
  */
 public class VideotecaHandler extends DefaultHandler {
     private  ArrayList<Categoria> categorias;
+    private Categoria categoriaActual;
 
     
    
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
-        Categoria categoriaActual;
 
         switch (qName) {
             case "videoteca":
@@ -45,7 +45,7 @@ public class VideotecaHandler extends DefaultHandler {
                 peli.setTitulo(att.getValue("titulo"));
                 peli.setDirector(att.getValue("director"));
                 peli.setAnio(Integer.parseInt(att.getValue("anio")));
-                        
+                categoriaActual.getPeliculas().add(peli);
                 
                 
                 break;
