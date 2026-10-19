@@ -105,8 +105,8 @@ public final class Configuracion {
         ComprobacionRutas.comprobarImportacion(fichero);
 
         Properties p = new Properties();
-        try(Reader reader = Files.newBufferedReader(fichero)){
-            p.load(reader);
+        try(Reader r = Files.newBufferedReader(fichero)){
+            p.load(r);
         }
 
         Configuracion def = porDefecto();

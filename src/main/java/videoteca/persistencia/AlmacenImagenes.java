@@ -1,9 +1,9 @@
 package videoteca.persistencia;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+
+import java.io.*;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -44,7 +44,8 @@ public class AlmacenImagenes implements Closeable {
      * TODO: implementar.
      */
     public void abrir() throws IOException {
-        throw new UnsupportedOperationException("TODO: AlmacenImagenes.abrir (tarea 8)");
+        almacen = new RandomAccessFile(ficheroImagenes.toFile(),"r");
+        indice=cargarIndice();
     }
 
     /**
@@ -54,7 +55,11 @@ public class AlmacenImagenes implements Closeable {
      */
     @SuppressWarnings("unchecked")
     private Map<Integer, Integer> cargarIndice() throws IOException {
-        throw new UnsupportedOperationException("TODO: AlmacenImagenes.cargarIndice (tarea 8)");
+        try(ObjectInputStream ois= new ObjectInputStream(new FileInputStream((ficheroIndice.toFile())))){
+            return (Map<Integer, Integer>) ois.readObject();
+        } catch (Exception e) {
+            throw new IOException("Error al utilizar el fichero: "+ e.getMessage());
+        }
     }
 
     /**
@@ -70,7 +75,20 @@ public class AlmacenImagenes implements Closeable {
      * TODO: implementar.
      */
     public byte[] obtener(int idPelicula) throws IOException {
-        throw new UnsupportedOperationException("TODO: AlmacenImagenes.obtener (tarea 8)");
+        Integer numRegistro = indice.get(idPelicula);
+        if(numRegistro == null){
+            return null;
+        }
+
+        almacen.seek((long) numRegistro * TAMANO_REGISTRO);
+
+        byte[] registro = new byte[TAMANO_REGISTRO];
+
+        int finalArray= registro.length;
+        while(registro != null && registro[finalArray-1] ==0 && finalArray>0){
+            finalArray--;
+        }
+        return Arrays.copyOf(registro,finalArray);
     }
 
     @Override

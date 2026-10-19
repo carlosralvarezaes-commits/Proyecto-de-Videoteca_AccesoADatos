@@ -5,11 +5,7 @@ import videoteca.excepciones.ExcepcionFicheroNoExiste;
 import videoteca.excepciones.ExcepcionOperacionCancelada;
 import videoteca.modelo.Categoria;
 import videoteca.modelo.Pelicula;
-import videoteca.persistencia.ComprobacionRutas;
-import videoteca.persistencia.Configuracion;
-import videoteca.persistencia.GestorJSON;
-import videoteca.persistencia.GestorTextoPlano;
-import videoteca.persistencia.GestorXML;
+import videoteca.persistencia.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -139,7 +135,7 @@ public class ServicioVideotecaImpl implements ServicioVideoteca {
            return "Fichero de Configuracion :  "+rutaAbsoluta+" -> Existe. Opciones leidas";
         }catch (Exception e ){
             configuracion=Configuracion.porDefecto();
-            return "Fichero de Configuracion: "+rutaAbsoluta+" -> Existe, pero no se ha podido leer ("+e.getMessage()+"). Se han Colocado las opciones por defecto ";
+            return "Fichero de Configuracion: "+rutaAbsoluta+" -> Existe, pero no se ha podido leer. Se han Colocado las opciones por defecto ";
         }
     }
 
@@ -156,7 +152,15 @@ public class ServicioVideotecaImpl implements ServicioVideoteca {
      */
     @Override
     public byte[] obtenerImagen(int idPelicula) throws IOException {
-        throw new UnsupportedOperationException("TODO: obtenerImagen (tarea 8)");
+        Path rutaImagen = directorioConfig.resolve("imagenes.dat");
+        Path rutaIndice = directorioConfig.resolve("indice.dat");
+        if(!Files.exists(rutaImagen) || !Files.exists(rutaIndice)){
+            return null;
+        }
+        try(AlmacenImagenes almacenamiento = new AlmacenImagenes(rutaImagen,rutaIndice)){
+            almacenamiento.abrir();
+            return almacenamiento.obtener(idPelicula);
+        }
     }
 
     /**
@@ -171,7 +175,16 @@ public class ServicioVideotecaImpl implements ServicioVideoteca {
      */
     @Override
     public Categoria crearCategoria(String nombre) {
-        throw new UnsupportedOperationException("TODO: crearCategoria (tarea 9)");
+        if(nombre == null || nombre.trim().isEmpty()){
+            throw new IllegalArgumentException();
+        }
+        int id =GeneradorIds.siguienteIdCategoria(categorias);
+        //crea e ingresa la categoria a la lista de categorias
+        Categoria categoriaNew= new Categoria(id, nombre);
+        categorias.add(categoriaNew);
+        //retorna la categoria nueva pero ya ingresada en la lista
+        return categoriaNew;
+
     }
 
     /**
@@ -187,6 +200,26 @@ public class ServicioVideotecaImpl implements ServicioVideoteca {
      */
     @Override
     public Pelicula crearPelicula(int idCategoria, String titulo, String director, int anio, int duracionMinutos) {
-        throw new UnsupportedOperationException("TODO: crearPelicula (tarea 9)");
+        if(titulo == null || titulo.trim().isEmpty()){
+            throw new IllegalArgumentException();
+        }
+
+        Categoria destion= null;
+        for(Categoria categoria : categorias){
+            if(idCategoria == categoria.getId()){
+                destion=categoria;
+                break;
+            }
+        }
+
+        if(destion==null){
+            throw new IllegalArgumentException();
+        }
+
+        int idPelicula = GeneradorIds.siguienteIdPelicula(categorias);
+        Pelicula peliculaNew = new Pelicula(idPelicula,titulo,director,anio,duracionMinutos);
+        destion.getPeliculas().add(peliculaNew);
+
+        return peliculaNew;
     }
 }
