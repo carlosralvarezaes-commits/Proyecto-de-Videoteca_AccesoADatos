@@ -3,6 +3,8 @@ package videoteca.persistencia;
 import videoteca.excepciones.ExcepcionDirectorioNoExiste;
 import videoteca.excepciones.ExcepcionFicheroNoExiste;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -105,8 +107,8 @@ public final class Configuracion {
         ComprobacionRutas.comprobarImportacion(fichero);
 
         Properties p = new Properties();
-        try(Reader r = Files.newBufferedReader(fichero)){
-            p.load(r);
+        try(BufferedReader br = new BufferedReader(new FileReader(fichero.toFile()))){
+            p.load(br);
         }
 
         Configuracion def = porDefecto();
@@ -164,7 +166,11 @@ public final class Configuracion {
         String valorImpXML  = p.getProperty("importacion_xml");
 
         if(valorImpXML!=null){
+
+
             valorImpXML=valorImpXML.trim().toUpperCase();
+
+
             if(valorImpXML.equalsIgnoreCase("sax")){
                 importacionXML=TecnicaLecturaXml.SAX;
             } else if (valorImpXML.equalsIgnoreCase("jaxb")) {
@@ -179,7 +185,9 @@ public final class Configuracion {
         String valorExpXML = p.getProperty("exportacion_xml");
 
         if(valorExpXML !=null) {
-            valorExpXML = valorExpXML.trim().toUpperCase();
+
+            valorExpXML = valorExpXML.trim();
+
             if (valorExpXML.equalsIgnoreCase("dom")) {
                 exportacionXML = TecnicaEscrituraXml.DOM;
             } else if (valorExpXML.equalsIgnoreCase("jaxb")) {

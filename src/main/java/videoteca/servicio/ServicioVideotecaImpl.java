@@ -7,6 +7,8 @@ import videoteca.modelo.Categoria;
 import videoteca.modelo.Pelicula;
 import videoteca.persistencia.*;
 
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -127,6 +129,7 @@ public class ServicioVideotecaImpl implements ServicioVideoteca {
     public String iniciar(){
         Path ruta=directorioConfig.resolve("conf.properties");
         String rutaAbsoluta= String.valueOf(ruta.toAbsolutePath().normalize());
+
         if(!Files.exists(ruta)){
             configuracion=Configuracion.porDefecto();
         }
@@ -154,14 +157,21 @@ public class ServicioVideotecaImpl implements ServicioVideoteca {
     public byte[] obtenerImagen(int idPelicula) throws IOException {
         Path rutaImagen = directorioConfig.resolve("imagenes.dat");
         Path rutaIndice = directorioConfig.resolve("indice.dat");
+
+        //No existen alguno de los 2 , no existe uno de ellos entonces se retorna null
         if(!Files.exists(rutaImagen) || !Files.exists(rutaIndice)){
             return null;
         }
+
+        //Si existen las imagenes
         try(AlmacenImagenes almacenamiento = new AlmacenImagenes(rutaImagen,rutaIndice)){
             almacenamiento.abrir();
             return almacenamiento.obtener(idPelicula);
         }
     }
+
+
+
 
     /**
      * TAREA 9. Crea una categoria con un id nuevo y la guarda en memoria.

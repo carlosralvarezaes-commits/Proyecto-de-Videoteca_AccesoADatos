@@ -55,8 +55,11 @@ public class AlmacenImagenes implements Closeable {
      */
     @SuppressWarnings("unchecked")
     private Map<Integer, Integer> cargarIndice() throws IOException {
+
         try(ObjectInputStream ois= new ObjectInputStream(new FileInputStream((ficheroIndice.toFile())))){
+
             return (Map<Integer, Integer>) ois.readObject();
+
         } catch (Exception e) {
             throw new IOException("Error al utilizar el fichero: "+ e.getMessage());
         }
@@ -83,12 +86,13 @@ public class AlmacenImagenes implements Closeable {
         almacen.seek((long) numRegistro * TAMANO_REGISTRO);
 
         byte[] registro = new byte[TAMANO_REGISTRO];
-
-        int finalArray= registro.length;
-        while(registro != null && registro[finalArray-1] ==0 && finalArray>0){
+        almacen.readFully(registro);
+        int finalArray= TAMANO_REGISTRO;
+        while(finalArray >0 && registro[finalArray-1] ==0){
             finalArray--;
         }
-        return Arrays.copyOf(registro,finalArray);
+        byte[] arrayCopia = Arrays.copyOf(registro,finalArray);
+        return arrayCopia;
     }
 
     @Override

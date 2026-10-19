@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * JSON con Gson o con Jackson.
@@ -103,4 +104,11 @@ public final class GestorJSON {
         List<Categoria> c= mapper.readValue(fichero.toFile(),new TypeReference<List <Categoria>> (){});
         return c;
     }
+
+    public void asd (){
+
+    }
+
 }
+
+

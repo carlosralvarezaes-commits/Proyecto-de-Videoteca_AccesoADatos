@@ -42,7 +42,7 @@ public final class ComprobacionRutas {
             throw new ExcepcionDirectorioNoExiste(directorio);
         }
 
-        if(!Files.isRegularFile(directorio)) {
+        if(!Files.isRegularFile(fichero)) {
             throw new ExcepcionFicheroNoExiste(directorio);
         }
 

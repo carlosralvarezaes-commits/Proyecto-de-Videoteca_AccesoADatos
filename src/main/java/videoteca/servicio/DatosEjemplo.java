@@ -16,7 +16,8 @@ public final class DatosEjemplo {
     }
 
     public static List<Categoria> crearVideoteca() {
-        Categoria cienciaFiccion = new Categoria(1, "Ciencia ficción");
+        return new ArrayList<>();
+        /*Categoria cienciaFiccion = new Categoria(1, "Ciencia ficción");
         cienciaFiccion.getPeliculas().add(new Pelicula(101, "Blade Runner", "Ridley Scott", 1982, 117));
         cienciaFiccion.getPeliculas().add(new Pelicula(102, "Interstellar", "Christopher Nolan", 2014, 169));
 
@@ -30,6 +31,6 @@ public final class DatosEjemplo {
         lista.add(cienciaFiccion);
         lista.add(comedia);
         lista.add(terror);
-        return lista;
+        return lista;*/
     }
 }
